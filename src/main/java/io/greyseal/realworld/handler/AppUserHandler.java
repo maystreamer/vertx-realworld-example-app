@@ -57,7 +57,7 @@ public class AppUserHandler extends BaseHandler {
             updateOptions.setUpsert(true);
             appUserHelper.updateAppUser(query, appUser.toJson(), updateOptions)
                     .doOnSuccess(jsonObject -> {
-                        event.setBody(Buffer.buffer(AppUserDTO.toAppUserDTO(jsonObject).toString()));
+                        event.setBody(Buffer.buffer(appUser.toJson().toString()));
                         event.response().setStatusCode(HttpResponseStatus.OK.code());
                         event.next();
                     }).doOnError(cause -> {

@@ -41,7 +41,7 @@ public class PingHandler extends BaseHandler {
      * @return HttpResponse either success or fail
      */
     @Override
-    @Protected //used to protect the API
+    //@Protected //used to protect the API
     @RequestMapping(method = HttpMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void handle(RoutingContext ctx) {
         try {
