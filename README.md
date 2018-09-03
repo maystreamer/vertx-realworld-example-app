@@ -1,6 +1,5 @@
 # vertx-realworld-example-app
-Sample aplication to demo a vertx-realworld-example-app for [gothinkster] (https://github.com/gothinkster/realworld/issues/228). Built with vertx web to showcase the usage of [vertx-boot]
-(https://github.com/greyseal/vertx-boot) library. 
+Sample aplication to demo a vertx-realworld-example-app for [gothinkster](https://github.com/gothinkster/realworld/issues/228). Built with vertx web to showcase the usage of [vertx-boot](https://github.com/greyseal/vertx-boot) library. 
 
 ## Getting Started
 
