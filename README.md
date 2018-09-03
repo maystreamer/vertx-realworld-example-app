@@ -20,7 +20,7 @@ This sample application make use of [Vertx-Boot](https://github.com/greyseal/ver
 ## Running the app
 
 For running the app, (IDE used here is IntelliJ)
-- Open **appConfig.json** file and set the "http_server_port" as per your choice.
+- Open **appConfig.json** file and set the "http_server_port" as per your choice. Also, set "**mongo_config**".
 - Once, changes are done in **appConfig.json**, add/edit Run/Debug Configurations for the project("vertx-realworld-example-app") and set:
   * **Main class**: com.greyseal.vertx.boot.AppLauncher
   * **VM options**: -Dlogback.configurationFile=file:../vertx-realworld-example-app/src/main/resources/logback.xml
