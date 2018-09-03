@@ -1,0 +1,111 @@
+buildscript {
+    ext {
+        vertxVersion = "3.5.3"
+        logbackVersion = "1.2.3"
+        slf4jVersion = "1.7.25"
+        reflectionVersion = "0.9.11"
+        gradleVersion = "4.9"
+        commonsLang3Version = "3.7"
+        modelMapper = "2.2.0"
+        junitJupiterEngineVersion = "5.2.0"
+        sourceJavaVersion = "1.8"
+    }
+}
+
+plugins {
+    id 'com.github.johnrengelman.shadow' version '2.0.4'
+    id 'java'
+    id 'eclipse'
+    id 'application'
+}
+
+repositories {
+    jcenter()
+    maven { url "https://plugins.gradle.org/m2/" }
+}
+
+group 'io.greyseal.realworld'
+version '1.0-SNAPSHOT'
+
+mainClassName = 'com.greyseal.vertx.boot.AppLauncher'
+def mainVerticleName = 'com.greyseal.vertx.boot.verticle.MainVerticle'
+def watchForChange = 'src/**/*'
+def doOnChange = './gradlew classes'
+
+dependencies {
+    compile "io.vertx:vertx-web:${vertxVersion}",
+            "io.vertx:vertx-rx-java2:${vertxVersion}",
+            "io.vertx:vertx-service-proxy:${vertxVersion}",
+            "io.vertx:vertx-mongo-client:${vertxVersion}",
+            "io.vertx:vertx-auth-oauth2:${vertxVersion}",
+            "ch.qos.logback:logback-classic:${logbackVersion}",
+            "ch.qos.logback:logback-core:${logbackVersion}",
+            "org.slf4j:slf4j-api:${slf4jVersion}",
+            "org.modelmapper:modelmapper:${modelMapper}",
+            "org.apache.commons:commons-lang3:${commonsLang3Version}",
+            "org.reflections:reflections:${reflectionVersion}",
+            "io.vertx:vertx-service-proxy:${vertxVersion}:processor"
+    compile project(':vertx-boot')
+    compileOnly "io.vertx:vertx-codegen:${vertxVersion}"
+
+    testImplementation "io.vertx:vertx-junit5:$vertxVersion"
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:$junitJupiterEngineVersion")
+}
+
+task annotationProcessing(type: JavaCompile, group: 'build') { // codegen
+    source = sourceSets.main.java
+    classpath = configurations.compile + configurations.compileOnly
+    destinationDir = project.file('src/main/generated')
+    options.compilerArgs = [
+            "-proc:only",
+            "-processor", "io.vertx.codegen.CodeGenProcessor",
+            "-Acodegen.output=${project.projectDir}/src/main"
+    ]
+}
+
+compileJava {
+    sourceCompatibility = sourceJavaVersion
+    dependsOn annotationProcessing
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs += 'src/main/generated'
+        }
+    }
+}
+
+sourceSets {
+    generated {
+        java.srcDir "${projectDir}/src/generated/java"
+    }
+}
+
+
+shadowJar {
+    baseName = 'realworld-app'
+    version = '0.0.1'
+    classifier = 'fat'
+    manifest {
+        attributes 'Main-Verticle': mainVerticleName
+    }
+    mergeServiceFiles {
+        include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
+    }
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events 'PASSED', 'FAILED', 'SKIPPED'
+    }
+}
+
+run {
+    args = ['run', mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$mainClassName", "--on-redeploy=$doOnChange"]
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = gradleVersion
+}

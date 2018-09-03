@@ -1,0 +1,5 @@
+use realworld-example;
+
+db.createCollection('app_users');
+db.getCollection('app_users').ensureIndex( { "email": 1 }, { unique: true, name:"uq_email" } )
+

@@ -1,0 +1,81 @@
+buildscript {
+    ext {
+        vertxVersion = "3.5.2.CR3"
+        logbackVersion = "1.2.3"
+        slf4jVersion = "1.5.25"
+        reflectionVersion = "0.9.11"
+        gradleVersion = "4.3.1"
+        powerMockVersion = "1.6.4"
+        commonsLang3Version = "3.5"
+        sourceJavaVersion = "1.8"
+        targetJavaVersion = "1.8"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'application'
+}
+
+repositories {
+    jcenter()
+    maven { url "https://plugins.gradle.org/m2/" }
+}
+
+mainClassName = 'com.greyseal.vertx.boot.AppLauncher'
+
+group 'com.greyseal.vertx.boot'
+version '1.0-SNAPSHOT'
+
+sourceSets {
+    generated {
+        java.srcDir "${projectDir}/src/generated/java"
+    }
+}
+
+dependencies {
+    compile "io.vertx:vertx-web:${vertxVersion}",
+            "io.vertx:vertx-rx-java2:${vertxVersion}",
+            "io.vertx:vertx-service-proxy:${vertxVersion}",
+            "ch.qos.logback:logback-classic:${logbackVersion}",
+            "ch.qos.logback:logback-core:${logbackVersion}",
+            "org.slf4j:slf4j-api:${slf4jVersion}",
+            "org.apache.commons:commons-lang3:${commonsLang3Version}",
+            "org.reflections:reflections:${reflectionVersion}",
+            "io.vertx:vertx-service-proxy:${vertxVersion}:processor",
+            "io.vertx:vertx-web-client:${vertxVersion}"
+
+    compileOnly "io.vertx:vertx-codegen:${vertxVersion}"
+    testCompile "io.vertx:vertx-unit:${vertxVersion}"
+    testCompile "org.powermock:powermock-mockito-release-full:${powerMockVersion}"
+}
+
+task annotationProcessing(type: JavaCompile, group: 'build') { // codegen
+    source = sourceSets.main.java
+    classpath = configurations.compile + configurations.compileOnly
+    destinationDir = project.file('src/main/generated')
+    options.compilerArgs = [
+            "-proc:only",
+            "-processor", "io.vertx.codegen.CodeGenProcessor",
+            "-AoutputDirectory=${project.projectDir}/src/main"
+    ]
+}
+
+compileJava {
+    targetCompatibility = sourceJavaVersion
+    sourceCompatibility = targetJavaVersion
+    dependsOn annotationProcessing
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs += 'src/main/generated'
+        }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = gradleVersion
+}

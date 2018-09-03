@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<property name="LOG_FILE_PATH" value="logs" />
+	<property name="LOG_FILE_NAME" value="app" />
+
+	<appender name="FILE"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_FILE_PATH}/${LOG_FILE_NAME}.log</file>
+		<!-- uncomment if time based policy needed -->
+		<!-- <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"> 
+			<fileNamePattern>${LOG_FILE_PATH}/${LOG_FILE_NAME}.%d{yyyy-MM-dd}.log.gz</fileNamePattern> 
+			<maxHistory>30</maxHistory> </rollingPolicy> -->
+
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_FILE_PATH}/${LOG_FILE_NAME}.%d{yyyy-MM}.%i.log
+			</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>500MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>6</maxHistory>
+		</rollingPolicy>
+
+		<append>true</append>
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>%date{ISO8601} [%thread] %-5level %logger{36} - %msg%xEx%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+		<appender-ref ref="FILE" />
+		<discardingThreshold>0</discardingThreshold>
+		<queueSize>500</queueSize>
+	</appender>
+
+	<appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
+		<discriminator>
+			<key>logid</key>
+			<defaultValue>unknown</defaultValue>
+		</discriminator>
+		<sift>
+			<appender name="FILE-${logid}" class="ch.qos.logback.core.FileAppender">
+				<file>logs/sift-${logid}.log</file>
+				<append>false</append>
+			</appender>
+		</sift>
+	</appender>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%date{HH:mm:ss.SSS} %-5level %logger{15} - %msg%xEx%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<!-- <logger name="io.vertx.realworld"> <level value="DEBUG" /> </logger> -->
+
+	<logger name="io.vertx">
+		<level value="DEBUG" />
+	</logger>
+
+	<logger name="io.netty.channel">
+		<level value="DEBUG" />
+	</logger>
+
+	<root>
+		<level value="DEBUG" />
+		<appender-ref ref="ASYNC" />
+	</root>
+
+</configuration>

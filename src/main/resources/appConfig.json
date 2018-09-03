@@ -1,0 +1,118 @@
+{
+  "http_protocol": "http://",
+  "http_server_host": "localhost",
+  "http_server_port": 8080,
+  "context_path": "/runner",
+  "verticle_package_name": "io.greyseal.realworld.verticle",
+  "handler_package_name": "io.greyseal.realworld.handler",
+  "http2Enabled": false,
+  "dev": {
+    "database_verticle": {
+      "ha": false,
+      "instances": 1,
+      "maxWorkerExecuteTime": 60000000000,
+      "multiThreaded": true,
+      "worker": true,
+      "workerPoolSize": 200
+    },
+    "http_server_verticle": {
+      "ha": false,
+      "instances": 1,
+      "maxWorkerExecuteTime": 60000000000,
+      "multiThreaded": false,
+      "worker": false,
+      "workerPoolSize": 200
+    },
+    "http_server_options": {
+      "acceptUnmaskedFrames": false,
+      "alpnVersions": [
+        "HTTP_2",
+        "HTTP_1_1"
+      ],
+      "compressionLevel": 6,
+      "compressionSupported": true,
+      "decompressionSupported": false,
+      "handle100ContinueAutomatically": false,
+      "http2ConnectionWindowSize": -1,
+      "initialSettings": {
+        "headerTableSize": 4096,
+        "initialWindowSize": 65535,
+        "maxConcurrentStreams": 100,
+        "maxFrameSize": 16384,
+        "maxHeaderListSize": 2147483647,
+        "pushEnabled": true
+      },
+      "maxChunkSize": 8192,
+      "maxHeaderSize": 8192,
+      "maxInitialLineLength": 4096,
+      "maxWebsocketFrameSize": 65536,
+      "maxWebsocketMessageSize": 262144
+    },
+    "http_client_options": {
+      "logActivity": false,
+      "receiveBufferSize": -1,
+      "reuseAddress": true,
+      "reusePort": false,
+      "sendBufferSize": -1,
+      "trafficClass": -1,
+      "crlPaths": [],
+      "crlValues": [],
+      "enabledCipherSuites": [],
+      "enabledSecureTransportProtocols": [
+        "TLSv1",
+        "TLSv1.1",
+        "TLSv1.2"
+      ],
+      "idleTimeout": 0,
+      "soLinger": -1,
+      "ssl": false,
+      "tcpCork": false,
+      "tcpFastOpen": false,
+      "tcpKeepAlive": false,
+      "tcpNoDelay": true,
+      "tcpQuickAck": false,
+      "useAlpn": false,
+      "usePooledBuffers": false,
+      "connectTimeout": 60000,
+      "metricsName": "",
+      "trustAll": false,
+      "alpnVersions": [],
+      "decoderInitialBufferSize": 128,
+      "defaultHost": "localhost",
+      "defaultPort": 80,
+      "forceSni": false,
+      "http2ClearTextUpgrade": true,
+      "http2ConnectionWindowSize": -1,
+      "http2MaxPoolSize": 1,
+      "http2MultiplexingLimit": -1,
+      "initialSettings": {
+        "headerTableSize": 4096,
+        "initialWindowSize": 65535,
+        "maxConcurrentStreams": 4294967295,
+        "maxFrameSize": 16384,
+        "maxHeaderListSize": 2147483647,
+        "pushEnabled": true
+      },
+      "keepAlive": true,
+      "maxChunkSize": 8192,
+      "maxHeaderSize": 8192,
+      "maxInitialLineLength": 4096,
+      "maxPoolSize": 5,
+      "maxRedirects": 16,
+      "maxWaitQueueSize": -1,
+      "maxWebsocketFrameSize": 65536,
+      "maxWebsocketMessageSize": 262144,
+      "pipelining": false,
+      "pipeliningLimit": 10,
+      "protocolVersion": "HTTP_1_1",
+      "sendUnmaskedFrames": false,
+      "tryUseCompression": false,
+      "verifyHost": true
+    },
+    "mongo_config": {
+      "db_name": "realworld-example",
+      "connection_string": "mongodb://127.0.0.1:27017/?serverselectiontimeoutms=10000;serverselectiontimeoutms=10000",
+      "useObjectId": true
+    }
+  }
+}

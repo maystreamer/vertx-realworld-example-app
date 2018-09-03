@@ -1,0 +1,3 @@
+rootProject.name = 'vertx-realworld-example-app'
+include ':vertx-boot'
+project(':vertx-boot').projectDir = new File(settingsDir, '/vertx-boot')
