@@ -21,7 +21,6 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.DecodeException;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.mongo.FindOptions;
 import io.vertx.ext.mongo.UpdateOptions;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.buffer.Buffer;
@@ -41,6 +40,11 @@ public class AppUserHandler extends BaseHandler {
         super(vertx);
     }
 
+    /**
+     * This method is used to update the user model
+     *
+     * @param event
+     */
     @Override
     @Protected
     @RequestMapping(method = HttpMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -70,8 +74,13 @@ public class AppUserHandler extends BaseHandler {
         }
     }
 
+    /**
+     * This method is used to register the user model without providing auth token
+     *
+     * @param event
+     */
     @RequestMapping(method = HttpMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void signUp(RoutingContext event) {
+    public void register(RoutingContext event) {
         try {
             final JsonObject appUserJson = event.getBodyAsJson().getJsonObject("user");
             final Date date = new Date();
@@ -99,8 +108,13 @@ public class AppUserHandler extends BaseHandler {
         }
     }
 
+    /**
+     * This method is used to login the user to the system
+     *
+     * @param event
+     */
     @RequestMapping(path = "/login", method = HttpMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void authenticate(final RoutingContext event) {
+    public void login(final RoutingContext event) {
         try {
             final JsonObject loginDTOJson = event.getBodyAsJson().getJsonObject("user");
             final LoginDTO loginDTO = Json.decodeValue(loginDTOJson.toString(), LoginDTO.class);
@@ -131,6 +145,32 @@ public class AppUserHandler extends BaseHandler {
         } catch (Exception ex) {
             LOGGER.error("Error while processing authentication ", ex);
             event.fail(new BadCredentialsException());
+        }
+    }
+
+    /**
+     * This method is used to get the current logged-in user
+     *
+     * @param event
+     */
+    @Protected
+    @RequestMapping(path = "/current", method = HttpMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void currentUser(final RoutingContext event) {
+        try {
+            final Date date = new Date();
+            final ObjectId userId = ((SessionUser) event.getDelegate().user()).getCurrentSession().getAppUserId();
+            appUserHelper.doFindOneById(userId)
+                    .doOnSuccess(appUser -> {
+                        event.setBody(Buffer.buffer(AppUserDTO.toAppUserDTO(appUser.toJson()).toString()));
+                        event.response().setStatusCode(HttpResponseStatus.OK.code());
+                        event.next();
+                    }).doOnError(cause -> {
+                event.fail(new RestException(new JsonObject().put("message", cause.getMessage()), HttpResponseStatus.INTERNAL_SERVER_ERROR.code()));
+            }).subscribe();
+        } catch (DecodeException dx) {
+            event.fail(new RestException(new JsonObject().put("message", "Invalid json passed"), HttpResponseStatus.BAD_REQUEST.code()));
+        } catch (Exception ex) {
+            event.fail(ex);
         }
     }
 }

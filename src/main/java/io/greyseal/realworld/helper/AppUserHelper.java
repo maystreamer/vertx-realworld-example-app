@@ -87,6 +87,17 @@ public enum AppUserHelper implements AuthProvider {
         });
     }
 
+    public Single<AppUser> doFindOneById(final ObjectId userId) {
+        final JsonObject query = new JsonObject().put("_id", new JsonObject().put("$oid", userId.toHexString()));
+        return DatabaseVerticle.rxDBService.rxFindOne(AppUser.DB_TABLE, query, null).map(result -> {
+            if (null == result)
+                throw new NotFoundException();
+            final AppUser _user = new AppUser(result);
+            _user.set_id(new ObjectId(result.getString("_id")));
+            return _user;
+        });
+    }
+
     public Single<Session> createSession(final AppUser appUser) {
         final Session session = Session.buildSession(appUser);
         return DatabaseVerticle.rxDBService.rxInsertOne(Session.DB_TABLE, session.toJson()).map(result -> {

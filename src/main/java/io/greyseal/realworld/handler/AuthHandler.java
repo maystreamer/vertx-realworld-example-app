@@ -28,6 +28,11 @@ public class AuthHandler extends BaseHandler {
         return new AuthHandler(vertx);
     }
 
+    /**
+     * This method is used to authenticate any api which has @Protected annotation
+     *
+     * @param event
+     */
     @Override
     public void handle(RoutingContext event) {
         System.out.println("AuthHandler called");

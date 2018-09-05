@@ -85,13 +85,6 @@ public class AppUser extends Base {
         return json;
     }
 
-    public JsonObject toAppUserDTO() {
-        JsonObject json = new JsonObject();
-        AppUserConverter.toJson(this, json);
-        toBaseJson(this, json);
-        return json;
-    }
-
     public AppUser toNewAppUser(boolean isSignUpUser) {
         String[] passwordAndSalt = PasswordStorageUtil.encrypt(this.getPassword());
         if (null != passwordAndSalt && passwordAndSalt.length == 2) {
